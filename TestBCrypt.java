@@ -17,7 +17,7 @@ import junit.framework.TestCase;
 /**
  * JUnit unit tests for BCrypt routines
  * @author Damien Miller
- * @version 0.1
+ * @version 0.2
  */
 public class TestBCrypt extends TestCase {
 	String test_vectors[][] = {
@@ -159,7 +159,7 @@ public class TestBCrypt extends TestCase {
 
 	/**
 	 * Test method for 'BCrypt.checkpw(String, String)'
-	 * expecting success
+	 * expecting failure
 	 */
 	public void testCheckpw_failure() {
 		System.out.print("BCrypt.checkpw w/ bad passwords: ");
@@ -172,4 +172,23 @@ public class TestBCrypt extends TestCase {
 		}
 		System.out.println("");
 	}
+
+	/**
+	 * Test for correct hashing of non-US-ASCII passwords
+	 */
+	public void testInternationalChars() {
+		System.out.print("BCrypt.hashpw w/ international chars: ");
+		String pw1 = "ππππππππ";
+		String pw2 = "????????";
+
+		String h1 = BCrypt.hashpw(pw1, BCrypt.gensalt());
+		assertFalse(BCrypt.checkpw(pw2, h1));
+		System.out.print(".");
+
+		String h2 = BCrypt.hashpw(pw2, BCrypt.gensalt());
+		assertFalse(BCrypt.checkpw(pw1, h2));
+		System.out.print(".");
+		System.out.println("");
+	}
+
 }
